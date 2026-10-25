@@ -146,7 +146,11 @@ export default function Models() {
   };
   return (
     <SafeAreaView edges={["bottom"]} style={styles.screen}>
-      <ScrollView style={sideInsets} contentContainerStyle={styles.content} contentInsetAdjustmentBehavior="automatic">
+      <ScrollView
+        style={sideInsets}
+        contentContainerStyle={styles.content}
+        contentInsetAdjustmentBehavior="automatic"
+      >
         {error ? (
           <Text accessibilityRole="alert" style={styles.error}>
             {error}
