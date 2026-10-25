@@ -64,6 +64,7 @@ import {
 import { loadResponseStreamingPreference } from "../lib/response-streaming";
 import { clearSavedChats } from "../lib/saved-chats";
 import { registerSessionDiskCache } from "../lib/session";
+import { InboxBesideContext } from "../lib/side-insets";
 import {
   chooseInboxWidth,
   closesSplitPane,
@@ -152,7 +153,9 @@ function SplitFrame({ children }: { children: ReactNode }) {
         </Animated.View>
       ) : null}
       {/* Keeps its place among the children so the navigation stack survives folding. */}
-      <View style={{ flex: 1, marginLeft: showsInbox ? foldGap : 0 }}>{children}</View>
+      <View style={{ flex: 1, marginLeft: showsInbox ? foldGap : 0 }}>
+        <InboxBesideContext.Provider value={showsInbox}>{children}</InboxBesideContext.Provider>
+      </View>
       {showsInbox && !foldActive ? (
         <GestureDetector gesture={resize}>
           {/* Drawn last and wider than the line, over both panes, so it is easy to grab. */}
@@ -332,8 +335,17 @@ function LayoutContent() {
               <View style={{ flex: 1 }}>
                 <SplitFrame>
                   <Stack
-                    screenLayout={({ navigation, children }) => (
-                      <AvatarScreenFocus navigation={navigation}>{children}</AvatarScreenFocus>
+                    screenLayout={({ navigation, options, children }) => (
+                      <AvatarScreenFocus navigation={navigation}>
+                        {/* Sheets and modals cover the window, so the chat list is not beside them. */}
+                        {options.presentation && options.presentation !== "card" ? (
+                          <InboxBesideContext.Provider value={false}>
+                            {children}
+                          </InboxBesideContext.Provider>
+                        ) : (
+                          children
+                        )}
+                      </AvatarScreenFocus>
                     )}
                     screenOptions={{
                       headerStyle: { backgroundColor: navigationTheme.colors.background },

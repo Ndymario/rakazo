@@ -1,5 +1,8 @@
+import { createContext, useContext } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useSplitView } from "./split-view";
+
+/** True for screens the split frame lays out beside the chat list, never for sheets over it. */
+export const InboxBesideContext = createContext(false);
 
 /**
  * Scroll view padding that keeps content clear of side bars, cutouts and the iPhone Duo outer
@@ -8,6 +11,6 @@ import { useSplitView } from "./split-view";
  */
 export function useSideInsets() {
   const insets = useSafeAreaInsets();
-  const { inboxShown } = useSplitView();
-  return { paddingLeft: inboxShown ? 0 : insets.left, paddingRight: insets.right };
+  const besideInbox = useContext(InboxBesideContext);
+  return { paddingLeft: besideInbox ? 0 : insets.left, paddingRight: insets.right };
 }
