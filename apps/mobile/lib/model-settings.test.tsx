@@ -14,6 +14,7 @@ const { push, saved } = vi.hoisted(() => ({
   saved: { baseUrl: "https://models.example.test/v1", hasKey: false },
 }));
 
+vi.mock("./side-insets", () => ({ useSideInsets: () => ({}) }));
 vi.mock("./api", () => ({
   captureApiRequestContext: async () => ({}),
   selectedSpaceId: () => "space-fixture",

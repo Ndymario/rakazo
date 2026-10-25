@@ -21,6 +21,7 @@ const picker = vi.hoisted(() => ({
     | undefined,
 }));
 
+vi.mock("./side-insets", () => ({ useSideInsets: () => ({}) }));
 vi.mock("react-native", () => {
   function MockView(props: {
     children?: ReactNode;
@@ -129,9 +130,7 @@ vi.mock("expo-router", () => ({
   useNavigation: () => ({ setOptions: () => undefined }),
 }));
 
-vi.mock("../lib/orientation", () => ({
-  holdFreeRotation: () => () => undefined,
-}));
+vi.mock("../lib/fold-regions", () => ({ useFoldRegions: () => [] }));
 
 vi.mock("../components/native-action-button", () => {
   return {

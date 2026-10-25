@@ -19,7 +19,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import type { ReactNode } from "react";
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
-import { Dimensions, Platform, StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
@@ -56,7 +56,6 @@ import {
 } from "../lib/live-notifications";
 import { native, useMobileTokens, useResolvedAppearance } from "../lib/native";
 import { useNotificationResponses } from "../lib/open-notification";
-import { syncOrientation } from "../lib/orientation";
 import {
   getCachedRemoteImagesEnabled,
   loadRemoteImagesPreference,
@@ -106,13 +105,13 @@ function SplitFrame({ children }: { children: ReactNode }) {
   useEffect(() => {
     paneSpace.current = pathname === "/" ? null : selectedSpaceId();
   }, [routeKey]);
-  const { split, inboxHidden, inboxWidth, foldGap, foldActive, windowWidth } = useSplitView();
+  const { split, inboxShown, inboxWidth, foldGap, foldActive, windowWidth } = useSplitView();
   const tokens = useMobileTokens();
   const home = pathname === "/";
   useEffect(() => {
     if (home) setInboxHidden(false);
   }, [home]);
-  const showsInbox = split && (home || !inboxHidden) && !FULL_WINDOW_ROUTES.has(pathname);
+  const showsInbox = split && (home || inboxShown) && !FULL_WINDOW_ROUTES.has(pathname);
   // Dragging resizes the list natively; the width is kept when the finger lifts.
   const paneWidth = useSharedValue(inboxWidth);
   const dragStart = useRef(inboxWidth);
@@ -228,14 +227,6 @@ function ChatContentProviders({
 }
 
 function LayoutContent() {
-  useEffect(() => {
-    // Re-read live geometry after folding, rotation, or window resizing.
-    const subscription = Dimensions.addEventListener("change", () => {
-      void syncOrientation();
-    });
-    void syncOrientation();
-    return () => subscription.remove();
-  }, []);
   const { t } = useI18n();
   const insets = useSafeAreaInsets();
   // Beside the list a chat swaps in place, the way it does when picked from a sidebar.

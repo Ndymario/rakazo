@@ -89,6 +89,7 @@ import {
 import type { ModelPickerRequest } from "../../lib/model-picker-selection";
 import { closeModelPicker, openModelPicker } from "../../lib/model-picker-selection";
 import { native, useResolvedAppearance, useThemedStyles } from "../../lib/native";
+import { useSideInsets } from "../../lib/side-insets";
 import { errorText } from "../../lib/user-error";
 
 function connectionMaxTokensField(providerId: string, stored: number | undefined): string {
@@ -125,6 +126,7 @@ type ModelSelection = {
 type FeedbackAnchor = "probe" | "model" | "connection" | "limits";
 
 export default function Models() {
+  const sideInsets = useSideInsets();
   const styles = useThemedStyles(createModelsStyles);
   const router = useRouter();
   const pickerRequestRef = useRef<string | null>(null);
@@ -1753,6 +1755,7 @@ export default function Models() {
   return (
     <SafeAreaView edges={["bottom"]} style={styles.screen}>
       <ScrollView
+        style={sideInsets}
         contentContainerStyle={styles.content}
         contentInsetAdjustmentBehavior="automatic"
         keyboardDismissMode="on-drag"
